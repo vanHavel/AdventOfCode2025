@@ -1,0 +1,14 @@
+[project]
+name = "aoc2025"
+version = "1.0.0"
+description = "Advent of Code 2025"
+authors = [{ name = "Lukas Huwald" }]
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+dependencies = [
+    "advent-of-code-data",
+    "joblib",
+    "networkx",
+    "matplotlib",
+    "scipy",
+]
