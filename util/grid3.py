@@ -25,6 +25,12 @@ def manhattan(p1: Pos, p2: Pos) -> int:
     return abs(y1 - y2) + abs(x1 - x2) + abs(z1 - z2)
 
 
+def squared_distance(p1: Pos, p2: Pos) -> int:
+    y1, x1, z1 = p1
+    y2, x2, z2 = p2
+    return (y1 - y2) ** 2 + (x1 - x2) ** 2 + (z1 - z2) ** 2
+
+
 def right(d: Dir) -> Dir:
     if d == Dir.W:
         return Dir.N
