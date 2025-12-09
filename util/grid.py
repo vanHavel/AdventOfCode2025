@@ -14,6 +14,7 @@ class Dir(Enum):
 
 
 Pos = tuple[int, int]
+Edge = tuple[Pos, Pos]
 PosDir = tuple[Pos, Dir]
 
 
