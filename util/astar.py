@@ -1,42 +1,37 @@
-from dataclasses import astuple, dataclass, field
-from queue import PriorityQueue
-from typing import Callable, Dict, Iterable, List, Optional, Set, Tuple, TypeVar
-
-S = TypeVar('S')
+import heapq
+from typing import Callable, Dict, Iterable, Set
 
 
-@dataclass(order=True)
-class PrioritizedState:
-    priority: int
-    state: S = field(compare=False)
-
-
-class AStar:
+class AStar[S]:
     def __init__(
         self,
-        succ: Callable[[S], Iterable[Tuple[int, S]]],
+        succ: Callable[[S], Iterable[tuple[int, S]]],
         goal: Callable[[S], bool],
-        h: Callable[[S], int]
+        h: Callable[[S], int],
+        return_path: bool = True,
     ):
         self.succ = succ
         self.goal = goal
         self.h = h
+        self.return_path = return_path
 
-    def search(self, start: S) -> Optional[Tuple[int, List[S]]]:
+    def search(self, start: S) -> None | int | tuple[int, list[S]]:
         costs = {start: 0}
-        preds: Dict[S, S] = {}
+        preds: Dict[S, S] = {} if self.return_path else None
         closed: Set[S] = set()
-        pq: PriorityQueue[PrioritizedState] = PriorityQueue()
-        pq.put(PrioritizedState(priority=0, state=start))
+        pq: list[tuple[int, S]] = [(0, start)]
 
-        while not pq.empty():
-            top = pq.get()
-            f, u = top.priority, top.state
+        while pq:
+            f, u = heapq.heappop(pq)
+
             if u in closed:
                 continue
             closed.add(u)
 
             if self.goal(u):
+                if not self.return_path:
+                    return f, []
+
                 path = [u]
                 cur = u
                 while cur in preds:
@@ -51,10 +46,10 @@ class AStar:
                 g = costs[u] + d
                 if v not in costs or costs[v] > g:
                     costs[v] = g
-                    preds[v] = u
-                    f = g + self.h(v)
-                    pq.put(PrioritizedState(priority=f, state=v))
+                    if self.return_path:
+                        preds[v] = u
+                    f_new = g + self.h(v)
+                    heapq.heappush(pq, (f_new, v))
 
         return None
-
 
